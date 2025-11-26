@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { MixRecipe } from '../../types';
-import { Icon } from '../ui/Icon';
 
 interface RecipeEditorProps {
   recipe: MixRecipe;
@@ -139,8 +138,10 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({ recipe, onSave, onCa
                   });
                 }}
                 className="px-3 py-2 text-red-500 hover:bg-red-50 rounded-sm transition-colors"
+                aria-label="Remove ingredient"
+                title="Remove ingredient"
               >
-                <Icon name="alert-triangle" size={16} />
+                ×
               </button>
             </div>
           ))}
@@ -179,8 +180,10 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({ recipe, onSave, onCa
                   });
                 }}
                 className="px-3 py-2 text-red-500 hover:bg-red-50 rounded-sm transition-colors"
+                aria-label="Remove step"
+                title="Remove step"
               >
-                <Icon name="alert-triangle" size={16} />
+                ×
               </button>
             </div>
           ))}

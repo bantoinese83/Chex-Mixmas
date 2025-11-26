@@ -12,7 +12,7 @@ import { RecipeActions } from './RecipeActions';
 import { TIMEOUTS } from '../../constants/theme';
 
 export const RecipeCard: React.FC = () => {
-  const { generatedRecipe, saveRecipe, updateRecipe } = useMix();
+  const { generatedRecipe, saveRecipe, updateRecipe, setGeneratedRecipe } = useMix();
   const [isEditing, setIsEditing] = useState(false);
   const { copySuccess, saveSuccess, handleShare, handleSave, handleBuyIngredients } =
     useRecipeActions();
@@ -76,10 +76,15 @@ export const RecipeCard: React.FC = () => {
 
   const handleSaveEdit = useCallback(
     (updated: MixRecipe) => {
-      updateRecipe(generatedRecipe!.id, updated);
+      if (generatedRecipe) {
+        // Update the generated recipe in context
+        setGeneratedRecipe(updated);
+        // Also update in saved recipes if it exists there
+        updateRecipe(generatedRecipe.id, updated);
+      }
       setIsEditing(false);
     },
-    [generatedRecipe, updateRecipe]
+    [generatedRecipe, updateRecipe, setGeneratedRecipe]
   );
 
   const handleCancelEdit = useCallback(() => {

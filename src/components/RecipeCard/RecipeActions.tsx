@@ -10,7 +10,15 @@ interface RecipeActionsProps {
 }
 
 export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) => {
-  const { toggleFavorite, addTag, removeTag, setCollection, setRating, updateRecipe } = useMix();
+  const {
+    toggleFavorite,
+    addTag,
+    removeTag,
+    setCollection,
+    setRating,
+    updateRecipe,
+    setGeneratedRecipe,
+  } = useMix();
   const [showTagInput, setShowTagInput] = useState(false);
   const [newTag, setNewTag] = useState('');
   const [showCollectionInput, setShowCollectionInput] = useState(false);
@@ -19,22 +27,37 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
   const handleAddTag = () => {
     if (newTag.trim()) {
       addTag(recipe.id, newTag.trim());
+      // Update the current recipe view
+      setGeneratedRecipe({ ...recipe, tags: [...(recipe.tags || []), newTag.trim()] });
       setNewTag('');
       setShowTagInput(false);
     }
   };
 
   const handleSetCollection = () => {
-    setCollection(recipe.id, newCollection.trim() || null);
+    const collectionValue = newCollection.trim() || null;
+    setCollection(recipe.id, collectionValue);
+    // Update the current recipe view
+    setGeneratedRecipe({ ...recipe, collection: collectionValue || undefined });
     setShowCollectionInput(false);
   };
 
   const handleRating = (rating: number) => {
     setRating(recipe.id, rating);
+    // Update the current recipe view
+    setGeneratedRecipe({ ...recipe, rating });
   };
 
   const handleScale = (scaledRecipe: MixRecipe) => {
     updateRecipe(recipe.id, scaledRecipe);
+    // Update the current recipe view
+    setGeneratedRecipe(scaledRecipe);
+  };
+
+  const handleToggleFavorite = () => {
+    toggleFavorite(recipe.id);
+    // Update the current recipe view
+    setGeneratedRecipe({ ...recipe, isFavorite: !recipe.isFavorite });
   };
 
   return (
@@ -54,7 +77,7 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
       <div className="flex items-center justify-between">
         <span className="text-sm text-slate-700">Favorite</span>
         <button
-          onClick={() => toggleFavorite(recipe.id)}
+          onClick={handleToggleFavorite}
           className={`p-2 rounded-full transition-colors ${
             recipe.isFavorite
               ? 'text-yellow-500 bg-yellow-50'
@@ -133,7 +156,17 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
               className="inline-flex items-center gap-1 bg-slate-200 text-slate-700 px-2 py-1 rounded-full text-xs"
             >
               {tag}
-              <button onClick={() => removeTag(recipe.id, tag)} className="hover:text-red-500">
+              <button
+                onClick={() => {
+                  removeTag(recipe.id, tag);
+                  // Update the current recipe view
+                  setGeneratedRecipe({
+                    ...recipe,
+                    tags: recipe.tags?.filter((t) => t !== tag),
+                  });
+                }}
+                className="hover:text-red-500"
+              >
                 ×
               </button>
             </span>

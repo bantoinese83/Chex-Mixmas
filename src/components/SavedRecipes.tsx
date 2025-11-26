@@ -11,7 +11,6 @@ interface SavedRecipesProps {
 export const SavedRecipes: React.FC<SavedRecipesProps> = ({ isGrid = false }) => {
   const { savedRecipes, deleteRecipe, setView, setGeneratedRecipe, toggleFavorite } = useMix();
   const [filteredRecipes, setFilteredRecipes] = useState<MixRecipe[]>(savedRecipes);
-  const [selectedRecipes, setSelectedRecipes] = useState<Set<string>>(new Set());
 
   // Update filtered recipes when saved recipes change
   useEffect(() => {
@@ -95,22 +94,8 @@ export const SavedRecipes: React.FC<SavedRecipesProps> = ({ isGrid = false }) =>
                 }
               }}
               aria-label={`View recipe: ${recipe.title}`}
-              className={`group cursor-pointer flex flex-col bg-white border rounded-sm overflow-hidden shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-[#D31212] focus:ring-offset-2 ${
-                selectedRecipes.has(recipe.id) ? 'border-[#D31212] border-2' : 'border-slate-200'
-              }`}
-              onClick={() => {
-                if (!isGrid) {
-                  const newSelected = new Set(selectedRecipes);
-                  if (newSelected.has(recipe.id)) {
-                    newSelected.delete(recipe.id);
-                  } else {
-                    newSelected.add(recipe.id);
-                  }
-                  setSelectedRecipes(newSelected);
-                } else {
-                  handleRecipeClick(recipe);
-                }
-              }}
+              className="group cursor-pointer flex flex-col bg-white border border-slate-200 rounded-sm overflow-hidden shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-[#D31212] focus:ring-offset-2"
+              onClick={() => handleRecipeClick(recipe)}
             >
               {/* Recipe Image */}
               <div className="aspect-square relative overflow-hidden">
