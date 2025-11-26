@@ -32,9 +32,12 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mb-4">
               <Icon name="alert-triangle" size={32} className="text-[#D31212]" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Something went wrong</h2>
-            <p className="text-slate-600 mb-6">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Oops! Something went wrong</h2>
+            <p className="text-slate-600 mb-2">
+              Don't worry, even the best recipes sometimes need a second try. Let's get you back on track!
+            </p>
+            <p className="text-sm text-slate-500 mb-6">
+              Your recipes are safely saved, so you won't lose any of your delicious creations.
             </p>
             <div className="flex gap-3 justify-center">
               <button

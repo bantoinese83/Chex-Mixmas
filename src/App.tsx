@@ -1,5 +1,6 @@
 import React from 'react';
 import { MixProvider, useMix } from './context/MixContext';
+import { ToastProvider } from './context/ToastContext';
 import { Layout } from './components/Layout';
 import { GeneratorForm } from './components/GeneratorForm';
 import { RecipeCard } from './components/RecipeCard';
@@ -23,9 +24,11 @@ const AppContent: React.FC = () => {
 export default function App() {
   return (
     <ErrorBoundary>
-      <MixProvider>
-        <AppContent />
-      </MixProvider>
+      <ToastProvider>
+        <MixProvider>
+          <AppContent />
+        </MixProvider>
+      </ToastProvider>
     </ErrorBoundary>
   );
 }

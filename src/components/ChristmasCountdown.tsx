@@ -8,9 +8,9 @@ export const ChristmasCountdown: React.FC = () => {
   if (isChristmas) {
     return (
       <div className="flex items-center justify-center gap-2 text-[#D31212] font-bold">
-        <Icon name="gift" size={20} className="animate-none!" />
+        <Icon name="gift" size={20} className="!animate-none" />
         <span className="text-lg">🎄 Merry Christmas! 🎄</span>
-        <Icon name="gift" size={20} className="animate-none!" />
+        <Icon name="gift" size={20} className="!animate-none" />
       </div>
     );
   }

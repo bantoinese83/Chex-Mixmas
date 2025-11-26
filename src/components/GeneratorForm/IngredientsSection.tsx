@@ -55,7 +55,7 @@ export const IngredientsSection: React.FC<IngredientsSectionProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Filter ingredients..."
+            placeholder="Search ingredients (e.g., 'chocolate', 'pretzel')..."
             aria-label="Search and filter ingredients"
             className="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-300 focus:border-[#D31212] focus:ring-2 focus:ring-[#D31212] focus:ring-offset-1 outline-none text-sm rounded-sm transition-colors"
           />

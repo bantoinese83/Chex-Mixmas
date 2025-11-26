@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MixRecipe } from '../../types';
+import { Icon } from '../ui/Icon';
 
 interface RecipeEditorProps {
   recipe: MixRecipe;
@@ -12,15 +13,73 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({ recipe, onSave, onCa
   const [activeTab, setActiveTab] = useState<'basic' | 'ingredients' | 'instructions' | 'notes'>(
     'basic'
   );
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-save indicator
+  useEffect(() => {
+    const hasChanges = JSON.stringify(edited) !== JSON.stringify(recipe);
+    
+    if (hasChanges) {
+      setSaveStatus('unsaved');
+      
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      
+      // Show "saving" after 500ms of no changes
+      saveTimeoutRef.current = setTimeout(() => {
+        setSaveStatus('saving');
+        // Simulate save completion
+        setTimeout(() => {
+          setSaveStatus('saved');
+        }, 300);
+      }, 500);
+    } else {
+      setSaveStatus('saved');
+    }
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [edited, recipe]);
 
   const handleSave = () => {
     onSave(edited);
+    setSaveStatus('saved');
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Edit Recipe</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-slate-900">Edit Recipe</h2>
+          <div className="flex items-center gap-2 text-sm">
+            {saveStatus === 'saved' && (
+              <span className="flex items-center gap-1 text-green-600">
+                <Icon name="check-circle" size={16} />
+                <span>All changes saved</span>
+              </span>
+            )}
+            {saveStatus === 'saving' && (
+              <span className="flex items-center gap-1 text-blue-600">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span>Saving...</span>
+              </span>
+            )}
+            {saveStatus === 'unsaved' && (
+              <span className="flex items-center gap-1 text-slate-500">
+                <span>Unsaved changes</span>
+              </span>
+            )}
+          </div>
+        </div>
         <div className="flex gap-2">
           <button
             onClick={onCancel}
@@ -30,7 +89,7 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({ recipe, onSave, onCa
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-[#D31212] text-white rounded-sm hover:bg-red-800 transition-colors"
+            className="px-4 py-2 bg-[#D31212] text-white rounded-sm hover:bg-red-800 transition-colors font-semibold"
           >
             Save Changes
           </button>
@@ -63,8 +122,10 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({ recipe, onSave, onCa
               type="text"
               value={edited.title}
               onChange={(e) => setEdited({ ...edited, title: e.target.value })}
+              placeholder="e.g., Festive Holiday Chex Mix"
               className="w-full px-3 py-2 border border-slate-300 rounded-sm focus:border-[#D31212] focus:ring-2 focus:ring-[#D31212] focus:ring-offset-1 outline-none"
             />
+            <p className="text-xs text-slate-500 mt-1">💡 Make it descriptive and memorable!</p>
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
@@ -72,8 +133,10 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({ recipe, onSave, onCa
               value={edited.description}
               onChange={(e) => setEdited({ ...edited, description: e.target.value })}
               rows={3}
+              placeholder="Describe the flavor profile, occasion, or what makes this recipe special..."
               className="w-full px-3 py-2 border border-slate-300 rounded-sm focus:border-[#D31212] focus:ring-2 focus:ring-[#D31212] focus:ring-offset-1 outline-none"
             />
+            <p className="text-xs text-slate-500 mt-1">💡 Help others understand what makes this recipe unique!</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -82,6 +145,7 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({ recipe, onSave, onCa
                 type="text"
                 value={edited.prepTime}
                 onChange={(e) => setEdited({ ...edited, prepTime: e.target.value })}
+                placeholder="e.g., 15 minutes"
                 className="w-full px-3 py-2 border border-slate-300 rounded-sm focus:border-[#D31212] focus:ring-2 focus:ring-[#D31212] focus:ring-offset-1 outline-none"
               />
             </div>
@@ -91,6 +155,7 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({ recipe, onSave, onCa
                 type="text"
                 value={edited.servings}
                 onChange={(e) => setEdited({ ...edited, servings: e.target.value })}
+                placeholder="e.g., 8 servings"
                 className="w-full px-3 py-2 border border-slate-300 rounded-sm focus:border-[#D31212] focus:ring-2 focus:ring-[#D31212] focus:ring-offset-1 outline-none"
               />
             </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MixRecipe } from '../../types';
 import { useMix } from '../../context/MixContext';
+import { useToastContext } from '../../context/ToastContext';
 import { Icon } from '../ui/Icon';
 import { RecipeScaling } from './RecipeScaling';
 
@@ -19,6 +20,7 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
     updateRecipe,
     setGeneratedRecipe,
   } = useMix();
+  const { success } = useToastContext();
   const [showTagInput, setShowTagInput] = useState(false);
   const [newTag, setNewTag] = useState('');
   const [showCollectionInput, setShowCollectionInput] = useState(false);
@@ -29,6 +31,7 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
       addTag(recipe.id, newTag.trim());
       // Update the current recipe view
       setGeneratedRecipe({ ...recipe, tags: [...(recipe.tags || []), newTag.trim()] });
+      success(`Tag "${newTag.trim()}" added!`);
       setNewTag('');
       setShowTagInput(false);
     }
@@ -39,6 +42,7 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
     setCollection(recipe.id, collectionValue);
     // Update the current recipe view
     setGeneratedRecipe({ ...recipe, collection: collectionValue || undefined });
+    success(collectionValue ? `Added to "${collectionValue}" collection` : 'Removed from collection');
     setShowCollectionInput(false);
   };
 
@@ -46,6 +50,7 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
     setRating(recipe.id, rating);
     // Update the current recipe view
     setGeneratedRecipe({ ...recipe, rating });
+    success(`Rated ${rating} star${rating !== 1 ? 's' : ''}!`);
   };
 
   const handleScale = (scaledRecipe: MixRecipe) => {
@@ -53,12 +58,14 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
     setGeneratedRecipe(scaledRecipe);
     // Also update in saved recipes if it exists there
     updateRecipe(recipe.id, scaledRecipe);
+    success(`Recipe scaled to ${scaledRecipe.servings}!`);
   };
 
   const handleToggleFavorite = () => {
     toggleFavorite(recipe.id);
     // Update the current recipe view
     setGeneratedRecipe({ ...recipe, isFavorite: !recipe.isFavorite });
+    success(recipe.isFavorite ? 'Removed from favorites' : 'Added to favorites!');
   };
 
   return (
@@ -165,6 +172,7 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
                     ...recipe,
                     tags: recipe.tags?.filter((t) => t !== tag),
                   });
+                  success(`Tag "${tag}" removed`);
                 }}
                 className="hover:text-red-500"
               >

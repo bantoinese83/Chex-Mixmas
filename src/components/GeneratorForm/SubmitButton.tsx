@@ -6,8 +6,27 @@ interface SubmitButtonProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
+const LOADING_MESSAGES = [
+  'Our kitchen elves are working their magic...',
+  'Crafting your perfect holiday mix...',
+  'Mixing up something delicious...',
+  'Almost ready! Just a few more seconds...',
+];
+
 export const SubmitButton: React.FC<SubmitButtonProps> = ({ onSubmit }) => {
   const { isGenerating } = useMix();
+  const [loadingMessage, setLoadingMessage] = React.useState(LOADING_MESSAGES[0]!);
+
+  React.useEffect(() => {
+    if (isGenerating) {
+      let messageIndex = 0;
+      const interval = setInterval(() => {
+        messageIndex = (messageIndex + 1) % LOADING_MESSAGES.length;
+        setLoadingMessage(LOADING_MESSAGES[messageIndex]!);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isGenerating]);
 
   return (
     <div className="w-full flex flex-col items-center gap-3">
@@ -18,7 +37,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({ onSubmit }) => {
         className={`inline-block px-8 font-black text-xl py-6 uppercase tracking-widest rounded-sm transition-all shadow-lg transform relative ${
           isGenerating
             ? 'bg-[#D31212] text-white cursor-wait opacity-90'
-            : 'bg-[#D31212] text-white hover:bg-red-800 hover:scale-[1.01] active:scale-[0.99]'
+            : 'bg-[#D31212] text-white hover:bg-red-800 hover:scale-[1.01] active:scale-[0.99] focus:ring-2 focus:ring-[#D31212] focus:ring-offset-2'
         } disabled:opacity-90`}
       >
         {isGenerating ? (
@@ -52,7 +71,10 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({ onSubmit }) => {
         )}
       </button>
       {isGenerating && (
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md space-y-2">
+          <p className="text-center text-sm text-slate-600 animate-fade-in">
+            {loadingMessage}
+          </p>
           <ProgressBar isActive={isGenerating} duration={20000} />
         </div>
       )}

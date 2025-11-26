@@ -2,6 +2,8 @@ import React from 'react';
 import { useMix } from '../context/MixContext';
 import { Icon } from './ui/Icon';
 import { ChristmasCountdown } from './ChristmasCountdown';
+import { useToastContext } from '../context/ToastContext';
+import { ToastContainer } from './ui/Toast';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,6 +11,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { setView, error, clearError } = useMix();
+  const { toasts, dismissToast } = useToastContext();
 
   return (
     <div className="min-h-screen relative font-sans text-slate-900 bg-white flex flex-col">
@@ -53,7 +56,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               />
               <div className="flex-1">
                 <h3 className="font-bold text-[#D31212] mb-1">Oops! Something went wrong</h3>
-                <p className="text-red-800 text-sm">{error}</p>
+                <p className="text-red-800 text-sm mb-1">{error}</p>
+                <p className="text-red-700 text-xs">Don't worry, your recipes are safe. Try again or refresh the page.</p>
               </div>
               <button
                 onClick={clearError}
@@ -77,6 +81,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </footer>
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 };

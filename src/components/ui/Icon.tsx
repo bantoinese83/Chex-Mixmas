@@ -17,6 +17,10 @@ import {
   AlertTriangle,
   Clipboard,
   Check,
+  CheckCircle,
+  AlertCircle,
+  Info,
+  X,
   LucideIcon,
 } from 'lucide-react';
 
@@ -39,7 +43,11 @@ export type IconName =
   | 'cookie'
   | 'heart'
   | 'alert-triangle'
-  | 'check';
+  | 'check'
+  | 'check-circle'
+  | 'alert-circle'
+  | 'info'
+  | 'x';
 
 const iconMap: Record<IconName, LucideIcon> = {
   'file-text': FileText,
@@ -61,6 +69,10 @@ const iconMap: Record<IconName, LucideIcon> = {
   heart: Heart,
   'alert-triangle': AlertTriangle,
   check: Check,
+  'check-circle': CheckCircle,
+  'alert-circle': AlertCircle,
+  info: Info,
+  x: X,
 };
 
 export interface IconProps extends React.SVGProps<SVGSVGElement> {

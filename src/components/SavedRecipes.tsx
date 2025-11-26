@@ -35,9 +35,14 @@ export const SavedRecipes: React.FC<SavedRecipesProps> = ({ isGrid = false }) =>
           <h3 className="text-2xl font-serif font-bold text-slate-900 mb-3">
             No Recipes Saved Yet
           </h3>
-          <p className="text-slate-600 mb-2 max-w-md mx-auto">
+          <p className="text-slate-600 mb-4 max-w-md mx-auto">
             Your saved recipes will appear here. Start creating delicious holiday mixes!
           </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-sm p-4 max-w-md mx-auto mb-6">
+            <p className="text-sm text-blue-800">
+              <strong>💡 Pro Tip:</strong> Save your favorite recipes to access them anytime. You can organize them with tags and collections!
+            </p>
+          </div>
         </div>
         {!isGrid && (
           <button
@@ -72,7 +77,16 @@ export const SavedRecipes: React.FC<SavedRecipesProps> = ({ isGrid = false }) =>
 
       {displayRecipes.length === 0 && !isGrid ? (
         <div className="text-center py-16">
-          <p className="text-slate-600">No recipes match your filters.</p>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 mb-4">
+            <Icon name="gift" size={32} className="text-slate-400" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 mb-2">No recipes match your filters</h3>
+          <p className="text-slate-600 mb-4">Try adjusting your search or filters to find what you're looking for.</p>
+          <div className="bg-slate-50 border border-slate-200 rounded-sm p-3 max-w-md mx-auto">
+            <p className="text-sm text-slate-700">
+              <strong>💡 Tip:</strong> Clear your filters or search for a different term to see more recipes.
+            </p>
+          </div>
         </div>
       ) : (
         <div
