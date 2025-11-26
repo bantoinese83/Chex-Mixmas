@@ -1,0 +1,40 @@
+import { MixPreferences } from '../types';
+
+export const FLAVOR_PROFILES: { id: MixPreferences['vibe']; label: string }[] = [
+  { id: 'savory', label: 'Savory' },
+  { id: 'sweet', label: 'Sweet' },
+  { id: 'spicy', label: 'Spicy' },
+  { id: 'salty-sweet', label: 'Salty & Sweet' },
+  { id: 'sweet-spicy', label: 'Sweet & Spicy' },
+  { id: 'chocolatey', label: 'Chocolatey' },
+  { id: 'nutty', label: 'Nutty' },
+  { id: 'fruity', label: 'Fruity' },
+  { id: 'zesty', label: 'Zesty & Tangy' },
+  { id: 'smoky', label: 'Smoky' },
+  { id: 'umami', label: 'Umami Bomb' },
+  { id: 'holiday-spice', label: 'Holiday Spice' },
+  { id: 'herbal', label: 'Herbal' },
+  { id: 'citrus', label: 'Citrus' },
+  { id: 'caramel', label: 'Caramel' },
+  { id: 'maple', label: 'Maple' },
+  { id: 'cinnamon', label: 'Cinnamon' },
+  { id: 'vanilla', label: 'Vanilla' },
+  { id: 'coffee', label: 'Coffee' },
+  { id: 'earthy', label: 'Earthy' },
+  { id: 'buttery', label: 'Buttery' },
+  { id: 'cheesy', label: 'Cheesy' },
+  { id: 'garlic', label: 'Garlic' },
+  { id: 'herbs-de-provence', label: 'Herbs de Provence' },
+];
+
+export const SPICY_FLAVOR_PROFILES = [
+  'spicy',
+  'sweet-spicy',
+  'savory',
+  'zesty',
+  'smoky',
+  'umami',
+  'holiday-spice',
+  'garlic',
+  'herbs-de-provence',
+] as const satisfies readonly MixPreferences['vibe'][];

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": ["src/index.tsx", "src/App.tsx", "vite.config.ts"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": ["**/*.d.ts"],
+  "ignoreDependencies": [
+    "@types/node",
+    "@types/react",
+    "@types/react-dom"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignoreWorkspaces": []
+}
+
