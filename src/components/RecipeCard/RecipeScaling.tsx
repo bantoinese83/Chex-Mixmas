@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MixRecipe } from '../../types';
 import { scaleRecipe } from '../../utils/recipeScaling';
 import { Icon } from '../ui/Icon';
@@ -9,13 +9,24 @@ interface RecipeScalingProps {
 }
 
 export const RecipeScaling: React.FC<RecipeScalingProps> = ({ recipe, onScaled }) => {
-  const [servings, setServings] = useState(() => {
-    const match = recipe.servings.match(/(\d+)/);
+  const parseServingsFromRecipe = (servingsStr: string): number => {
+    const match = servingsStr.match(/(\d+)/);
     return match ? parseInt(match[1]!, 10) : 8;
-  });
+  };
+
+  const [servings, setServings] = useState(() => parseServingsFromRecipe(recipe.servings));
   const [isOpen, setIsOpen] = useState(false);
 
+  // Update servings when recipe changes
+  useEffect(() => {
+    const currentServings = parseServingsFromRecipe(recipe.servings);
+    setServings(currentServings);
+  }, [recipe.servings]);
+
   const handleScale = () => {
+    if (servings < 1 || servings > 100) {
+      return;
+    }
     const scaled = scaleRecipe(recipe, servings);
     onScaled(scaled);
     setIsOpen(false);

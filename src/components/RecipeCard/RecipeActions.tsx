@@ -49,9 +49,10 @@ export const RecipeActions: React.FC<RecipeActionsProps> = ({ recipe, onEdit }) 
   };
 
   const handleScale = (scaledRecipe: MixRecipe) => {
-    updateRecipe(recipe.id, scaledRecipe);
-    // Update the current recipe view
+    // Always update the current recipe view first
     setGeneratedRecipe(scaledRecipe);
+    // Also update in saved recipes if it exists there
+    updateRecipe(recipe.id, scaledRecipe);
   };
 
   const handleToggleFavorite = () => {

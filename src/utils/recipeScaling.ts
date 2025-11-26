@@ -13,48 +13,77 @@ const parseServings = (servings: string): number => {
  * Scales an ingredient quantity based on serving ratio
  */
 const scaleIngredient = (ingredient: string, ratio: number): string => {
-  // Match common measurement patterns
-  const patterns = [
-    // Fractions: 1/2, 1/4, 3/4
-    /(\d+\/\d+|\d+\.\d+|\d+)\s*(cup|cups|tbsp|tablespoon|tablespoons|tsp|teaspoon|teaspoons|oz|ounce|ounces|lb|pound|pounds|stick|sticks|box|boxes|bag|bags|package|packages|can|cans|jar|jars|clove|cloves|head|heads|bunch|bunches)/gi,
-    // Whole numbers with units
-    /(\d+)\s*(cup|cups|tbsp|tablespoon|tablespoons|tsp|teaspoon|teaspoons|oz|ounce|ounces|lb|pound|pounds|stick|sticks|box|boxes|bag|bags|package|packages|can|cans|jar|jars|clove|cloves|head|heads|bunch|bunches)/gi,
+  // Match common measurement patterns - single comprehensive pattern
+  // Matches: numbers (including fractions and decimals) followed by units
+  const pattern = /(\d+\/\d+|\d+\.\d+|\d+)\s*(cup|cups|tbsp|tablespoon|tablespoons|tsp|teaspoon|teaspoons|oz|ounce|ounces|lb|pound|pounds|stick|sticks|box|boxes|bag|bags|package|packages|can|cans|jar|jars|clove|cloves|head|heads|bunch|bunches|piece|pieces|item|items|container|containers|bottle|bottles|packet|packets)/gi;
+
+  // Check if pattern matches (create a new regex to avoid lastIndex issues)
+  const testPattern = /(\d+\/\d+|\d+\.\d+|\d+)\s*(cup|cups|tbsp|tablespoon|tablespoons|tsp|teaspoon|teaspoons|oz|ounce|ounces|lb|pound|pounds|stick|sticks|box|boxes|bag|bags|package|packages|can|cans|jar|jars|clove|cloves|head|heads|bunch|bunches|piece|pieces|item|items|container|containers|bottle|bottles|packet|packets)/i;
+  if (!testPattern.test(ingredient)) {
+    return ingredient;
+  }
+
+  // Replace all matches
+  return ingredient.replace(pattern, (match) => {
+    // Extract number from the match
+    const numberMatch = match.match(/(\d+\/\d+|\d+\.\d+|\d+)/);
+    if (!numberMatch) return match;
+
+    const numberStr = numberMatch[1]!;
+    let number: number;
+
+    // Handle fractions
+    if (numberStr.includes('/')) {
+      const parts = numberStr.split('/');
+      const num = parts[0] ? Number(parts[0]) : 0;
+      const den = parts[1] ? Number(parts[1]) : 1;
+      number = num / den;
+    } else {
+      number = parseFloat(numberStr);
+    }
+
+    // Scale the number
+    const scaled = number * ratio;
+
+    // Format the result
+    let formatted: string;
+    if (scaled < 1 && scaled > 0) {
+      // For values less than 1, try to use fractions
+      const fraction = getFraction(scaled);
+      formatted = fraction || scaled.toFixed(2).replace(/\.?0+$/, '');
+    } else {
+      // Round to 2 decimals, remove trailing zeros
+      formatted = scaled.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    // Replace the number in the match with the scaled value
+    return match.replace(numberStr, formatted);
+  });
+};
+
+/**
+ * Converts a decimal to a common fraction (for values < 1)
+ */
+const getFraction = (decimal: number): string | null => {
+  const commonFractions: Array<[number, string]> = [
+    [0.125, '1/8'],
+    [0.25, '1/4'],
+    [0.33, '1/3'],
+    [0.375, '3/8'],
+    [0.5, '1/2'],
+    [0.625, '5/8'],
+    [0.67, '2/3'],
+    [0.75, '3/4'],
+    [0.875, '7/8'],
   ];
 
-  for (const pattern of patterns) {
-    const match = ingredient.match(pattern);
-    if (match) {
-      return ingredient.replace(pattern, (match) => {
-        // Extract number
-        const numberMatch = match.match(/(\d+\/\d+|\d+\.\d+|\d+)/);
-        if (!numberMatch) return match;
-
-        const numberStr = numberMatch[1]!;
-        let number: number;
-
-        // Handle fractions
-        if (numberStr.includes('/')) {
-          const parts = numberStr.split('/');
-          const num = parts[0] ? Number(parts[0]) : 0;
-          const den = parts[1] ? Number(parts[1]) : 1;
-          number = num / den;
-        } else {
-          number = parseFloat(numberStr);
-        }
-
-        // Scale the number
-        const scaled = number * ratio;
-
-        // Format the result (round to 2 decimals, remove trailing zeros)
-        const formatted = scaled.toFixed(2).replace(/\.?0+$/, '');
-
-        return match.replace(numberStr, formatted);
-      });
+  for (const [value, fraction] of commonFractions) {
+    if (Math.abs(decimal - value) < 0.01) {
+      return fraction;
     }
   }
 
-  // If no pattern matches, return original
-  return ingredient;
+  return null;
 };
 
 /**
